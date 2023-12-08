@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
@@ -19,32 +19,60 @@ const fetchData = () => {
   };
 
   client.onmessage = (message) => {
-    const data = JSON.parse(message.data);
-    console.log('Received:', data);
+    console.log('Received message:', message);
 
-    if (data.type === 'event' && data.event.event_type === 'state_changed') {
-      const newState = data.event.data.new_state;
-      if (newState.entity_id === 'binary_sensor.presence_sensor_fp2_1708_presence_sensor_1') {
-        if (newState.state === 'on') {
-          alert('Someone is detected!');
-        } else {
-          alert('No one is detected.');
-        }
+    try {
+      console.log(message);
+      const data = JSON.parse(message.data);
+      console.log('Parsed data:', data);
+
+      if (data.type === 'event' && data.event.event_type === 'state_changed') {
+        const newState = data.event.data.new_state;
+        console.log('i am here:', newState);
+      } else {
+        console.log('You Know What I am not Here!');
       }
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
     }
-  };
 
-  client.onclose = () => {
-    console.log('WebSocket Client Closed');
-  };
-};
+      // if (data.type === 'event' && data.event.event_type === 'state_changed') {
+      //   const newState = data.event.data.new_state;
+      //   if (newState.entity_Id === 'binary_sensor.presence_sensor_fp2_1708_presence_sensor_1') {
+      //     if (newState.state === 'on') {
+      //       console.log('Someone is detected!');
+      //     } else {
+      //       console.log('No one is detected.');
+          }
+          
+        }
+        
+  //   }
+  //   else {
+  //     console.log('I am here');
+  //   }
+     
+  //   } catch (error) {
+  //     console.error('Error parsing JSON:', error);
+  //   }
+  // };
+
+  // person.onclose = () => {
+  //   console.log('WebSocket person Closed');
+  // };
+
 
 function App() {
+  useEffect(() => {
+    // This will be called when the component mounts
+    fetchData();
+  }, []);
+
   return (
     <div className="App-container">
       <h1>Stimulate fall</h1>
-      {/* Call fetchData when the button is clicked */}
-      <button onClick={fetchData}>fall</button>
+      {/* Call fetchData when the button is clicked
+      <button onClick={fetchData}>fall</button> */}
     </div>
   );
 }
